@@ -18,6 +18,7 @@ from gunicorn import __version__ as gversion
 
 
 class TornadoWorker(Worker):
+    server_kwargs = {}
 
     @classmethod
     def setup(cls):
@@ -103,9 +104,11 @@ class TornadoWorker(Worker):
 
         if self.cfg.is_ssl:
             server = server_class(app, io_loop=self.ioloop,
-                    ssl_options=self.cfg.ssl_options)
+                    ssl_options=self.cfg.ssl_options, 
+                    **self.server_kwargs)
         else:
-            server = server_class(app, io_loop=self.ioloop)
+            server = server_class(app, io_loop=self.ioloop,
+                    **self.server_kwargs)
 
         self.server = server
         self.server_alive = True
